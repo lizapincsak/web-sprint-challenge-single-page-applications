@@ -3,7 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import * as yup from 'yup';
 import schema from './validation/formSchema';
-import { Route, Link, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import Confirmation from './components/Confirmation';
 import Home from './components/Home';
@@ -23,17 +23,7 @@ const Title = styled.h1`
   color: ${(props) => props.theme.black};
 `;
 
-const LinkChange = styled.div `
-  display: flex;
-  justify-content: space-around;
-  color: ${(props) => props.theme.white};
-  border: 2px solid ${(props) => props.theme.tertiaryColor};
-  margin: 5%;
-  padding: 5% 5%;
-  font-size: 2em;
-`;
-
-const initialValueForms = {
+const initialFormValues = {
   name: '',
   pizzaSize: '',
   sausage: false, 
@@ -42,33 +32,36 @@ const initialValueForms = {
   mushrooms: false,
   specialInstructions: '',
 }
-
 const initilFormErrors = {
   name: '',
   pizzaSize: '',
   specialInstructions: '',
 }
 
+
 const initialOrder = [];
 const initialDisabled = true;
 
 function App() {
   const [orders, setOrders] = useState(initialOrder);
-  const [formValues, setFormValues] = useState(initialValueForms);
+  const [formValues, setFormValues] = useState(initialFormValues);
   const [formErrors, setFormErrors] = useState(initilFormErrors);
   const [disabled, setDisabled] = useState(initialDisabled);
 
   const postNewOrder = (newOrder) => {
-    axios.post('https://reqres.in/api/users', newOrder)
+    axios.post('https://reqres.in/api/pizza', newOrder)
     .then((res) => {
-      setOrders([res.data, ...orders]);
-      setFormValues(initialValueForms);
+      console.log(res);
+      setOrders([res.data, ...orders])
     })
     .catch((err) => {
       console.log(err);
     })
+    .finally(() => {
+      setFormValues(initialFormValues);
+    })
   }
-
+  
   const inputChange = (name, value) => {
     yup.reach(schema, name)
     .validate(value)
@@ -106,13 +99,9 @@ function App() {
 
   return (
     <DivWrapper>
-      <nav>
+      <header>
       <Title>Pasture and Plenty Pizza</Title>
-      <LinkChange>
-        <Link to='/'>Home</Link>
-        <Link to='/pizza'>Order</Link>
-      </LinkChange>
-      </nav>
+      </header>
       <Switch>
         <Route path='/pizza'>
           <PizzaForm 
@@ -125,13 +114,14 @@ function App() {
         </Route>
         <Route path='/thanks'>
           <Confirmation />
+          {/* {orders.map((order) => {
+            return <Confirmation key={order.id} details={order} />
+          })} */}
         </Route>
         <Route path='/'>
-          {orders.map((order) => {
-            return (<Home key={order.id} details={order} />)
-          })}
+          <Home />
         </Route>
-      </Switch>
+        </Switch>
     </DivWrapper>
   );
 };

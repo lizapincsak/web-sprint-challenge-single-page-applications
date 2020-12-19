@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, Route, useRouteMatch } from 'react-router-dom';
-import Confirmation from './Confirmation';
+import { useHistory, Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const PizzaDiv = styled.div`
@@ -36,9 +35,19 @@ const ButtonStyled = styled.div`
     transition: all 0.5s ease-in-out;
     }
 `
+const LinkStyle = styled.div`
+  display: flex;
+  justify-content: space-around;
+  color: ${(props) => props.theme.white};
+  border: 2px solid ${(props) => props.theme.tertiaryColor};
+  margin: 5%;
+  padding: 5% 5%;
+  font-size: 2em;
+`;
+
 export default function PizzaForm (props) {
     const { values, change, submit, disabled, errors } = props;
-    const { path } = useRouteMatch();
+    const history = useHistory();
 
     const onSubmit = (evt) => {
         evt.preventDefault();
@@ -50,18 +59,21 @@ export default function PizzaForm (props) {
         const valueToUse = type === 'checkbox' ? checked: value;
         change (name, valueToUse);
     }
+
     const thankYou = (evt) => {
-        alert('Thank you for your order!')
+        history.push('/thanks')
     }
 
     return(
         <div>
             <form onSubmit={onSubmit}>
+            <LinkStyle>
+                <Link to='/'>HOME</Link>
+            </LinkStyle>
                 <div className="errors" style={{color: 'brown'}}>
                     <div>{errors.name}</div>
                     <div>{errors.pizzaSize}</div>
                     <div>{errors.specialInstructions}</div>
-                    {/* <div>{errors.toppings}</div> */}
                 </div>
                 <PizzaDiv className="inputs">
                     <label>Name: 
@@ -125,16 +137,11 @@ export default function PizzaForm (props) {
                 </PizzaDiv>
                 <div>
                     <Subheader>Please Submit Your Order</Subheader>
-                    <Link to={'/thanks'}>
                     <ButtonStyled>
                     <button onClick={thankYou} className='submit' disabled={disabled}>Submit</button>
                     </ButtonStyled>
-                    </Link>
                 </div>
             </form>
-            <Route path={`${path}/thanks`}>
-                <Confirmation />
-            </Route>
         </div>
     )
 }

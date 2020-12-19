@@ -1,16 +1,21 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
-
-function Home ({ details }){
-    if (!details){
-        return <h3>Fetching your details...</h3>
-    }
+const LinkChange = styled.div `
+  display: flex;
+  justify-content: space-around;
+  color: ${(props) => props.theme.white};
+  border: 2px solid ${(props) => props.theme.tertiaryColor};
+  margin: 5%;
+  padding: 5% 5%;
+  font-size: 2em;
+`;
+function Home (){
     return(
-        <div className="userContainer">
-            <h2>Name: {details.name}</h2>
-            <p>Pizza Size: {details.pizzaSize}</p>
-            <p>Special Instructions: {details.specialInstructions}</p>
-        </div>
+        <LinkChange>
+            <Link to='/pizza'>ORDER</Link>
+        </LinkChange>
     )
 }
 export default Home;
